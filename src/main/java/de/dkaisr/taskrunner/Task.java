@@ -9,6 +9,7 @@ public class Task<T, R> {
     private T data;
     private Status status;
     private R result;
+    private Exception error;
 
     public Task(Strategy<T, R> strategy, T data) {
         this.id = UUID.randomUUID();
@@ -16,6 +17,7 @@ public class Task<T, R> {
         this.data = data;
         this.status = Status.WAITING;
         this.result = null;
+        this.error = null;
     }
 
     public void run() {
@@ -25,6 +27,7 @@ public class Task<T, R> {
             status = Status.SUCCESS;
         } catch (Exception e) {
             status = Status.FAILED;
+            error = e;
         }
     }
 
@@ -74,6 +77,10 @@ public class Task<T, R> {
 
     public Optional<R> getResult() {
         return hasSucceeded() ? Optional.ofNullable(result) : Optional.empty();
+    }
+
+    public Optional<Exception> getError() {
+        return hasFailed() ? Optional.ofNullable(error) : Optional.empty();
     }
 
 }
